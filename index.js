@@ -17,7 +17,6 @@ const client = new Client({
 });
 
 
-
 client.on('qr', qr => {
   qrcode.generate(qr, { small: true });
 });
@@ -27,6 +26,7 @@ client.on('ready', () => {
 });
 
 client.initialize();
+
 
 /*********************************************************************************************************** */
 var rmsg = `⚠️⚠️Command not found⚠️⚠️
