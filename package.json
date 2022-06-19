@@ -1,0 +1,19 @@
+{
+  "name": "whatsappbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "pm2": "^5.2.0",
+    "qrcode-terminal": "^0.12.0",
+    "readline": "^1.3.0",
+    "whatsapp-web.js": "^1.16.7",
+    "ytdl-core": "^4.11.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "pm2-runtime start ecosystem.config.js --env production"
+  },
+  "author": "Mazan Labeeb",
+  "license": "ISC",
+  "description": ""
+}
