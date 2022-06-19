@@ -77,7 +77,7 @@ client.on('ready', () => {
 
 // replying message with VIDEO SEND from our own pc
 client.on("message", async (message) => {
-  var foo = message.body;
+  var foo = message.body; 
   foo = foo.substring(0, 7);
   if (foo.toLowerCase() === "youtube") {
     var downloadPath = Date.now();
