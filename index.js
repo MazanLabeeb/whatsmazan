@@ -17,7 +17,7 @@ const chrome = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux,
+    executablePath: chrome,
   }
 });
 
@@ -96,7 +96,8 @@ client.on("message", async (message) => {
     if (ytdl.validateURL(url)) {
       message.reply("😍Wait Dear! Video send horhi hai apko😍");
       
-/************************************************************* */
+          /************************************************************* */
+          
           /************************************************************* */
                
                
