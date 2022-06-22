@@ -10,6 +10,33 @@ const axios = require("axios");
 // const ffmpeg = require('fluent-ffmpeg');
 // ffmpeg.setFfmpegPath(ffmpegPath);
 
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+function nFormatter(num, digits) {
+  const lookup = [
+    { value: 1, symbol: "" },
+    { value: 1e3, symbol: "k" },
+    { value: 1e6, symbol: "M" },
+    { value: 1e9, symbol: "G" },
+    { value: 1e12, symbol: "T" },
+    { value: 1e15, symbol: "P" },
+    { value: 1e18, symbol: "E" }
+  ];
+  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  var item = lookup.slice().reverse().find(function(item) {
+    return num >= item.value;
+  });
+  return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
+}
 
 const linux = "/usr/bin/google-chrome";
 const chrome = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -94,68 +121,79 @@ client.on("message", async (message) => {
 
 
     if (ytdl.validateURL(url)) {
-      message.reply("😍Wait Dear! Video send horhi hai apko😍");
-      
-          /************************************************************* */
-          
-          /************************************************************* */
-               
-               
-          let { ytv } = require('./lib/y2mate')
-          let text = url;
-          // let quality = args[1] ? args[1] : '360p'
+      ytdl.getBasicInfo(url).then((data)=>{
 
-          console.log(`"${url}"`)
-          let ytv_ = await  ytv(text, '360p');
-          console.log( ytv_);
-          
-          if(ytv_.filesize < 16000 || isNaN(ytv_.filesize)){
-                // const media2 =  await  MessageMedia.fromUrl(ytv_.thumb);
-                let cap = `*🖼️ ${ytv_.title}*`;
-                let file = ytv_.dl_link;
-                let mimetype;
-                let filename;
-                const attachment = await axios.get(file, {
-                responseType: 'arraybuffer'
-                }).then(response => {
-                mimetype = response.headers['content-type'];
-                filename = file.split("/").pop();
-                return response.data.toString('base64');
-                });
-                
-                if( attachment ){
-                const media = new MessageMedia(mimetype, attachment, filename);
-      
-                client.sendMessage(message.from, media, {caption: cap });
-                }
-          }else if(ytv_.filesize < 100000){
-                  const media2 =  await  MessageMedia.fromUrl(ytv_.thumb);
-                  let cap = `*🖼️ ${ytv_.title}*`;
-                  client.sendMessage(message.from,media2,{caption: cap});
-                  let file = ytv_.dl_link;
-                  let mimetype;
-                  let filename;
-                  const attachment = await axios.get(file, {
-                  responseType: 'arraybuffer'
-                  }).then(response => {
-                  mimetype = response.headers['content-type'];
-                  filename = ytv_.title;
-                  return response.data.toString('base64');
+        let URL = data.formats[0].url;
+        let title = data.videoDetails.title;
+        let channel = data.videoDetails.ownerChannelName;
+        let views = nFormatter(data.videoDetails.viewCount) ;
+        let likes = nFormatter(data.videoDetails.likes);
+        let videoId = data.videoDetails.videoId;
+        let thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+
+        // console.log("URL: "+(data.formats[0].url));
+        console.log("Title: "+data.videoDetails.title);
+        console.log("Channel: "+data.videoDetails.ownerChannelName);
+        console.log("Views: "+data.videoDetails.viewCount);
+        console.log("Likes: "+data.videoDetails.likes);
+        console.log("Age-restricted: "+data.videoDetails.age_restricted);
+        let cap =  `📛 *Title* :  ${title}
+🆔 *Channel* : ${channel}
+🎦 *Views*: ${views}
+👍🏻 *Likes*: ${likes}`;
+
+        if(!data.videoDetails.age_restricted){
+              message.reply("Wait dear! video send horhi hai apko😍😍");
+              const video = ytdl(url);
+              console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
+              video.once('response', () => {
+                starttime = Date.now();
+              });
+              video.on('progress', (chunkLength, downloaded, total) => {
+                const percent = downloaded / total;
+                const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
+                const estimatedDownloadTime = (downloadedMinutes / percent) - downloadedMinutes;
+                readline.cursorTo(process.stdout, 0);
+                process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded `);
+                process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
+                process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
+                process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);
+                readline.moveCursor(process.stdout, 0, -1);
+              });
+              video.on('end', () => {
+                process.stdout.write('\nDownload complete, now sending to user...\n\n');
+                var stats = fs.statSync('./temp_files/' + downloadPath + '.mp4');
+                var fileSizeInBytes = stats.size;
+                var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+                if (fileSizeInMegabytes < 16) {
+                  const media = MessageMedia.fromFilePath('./temp_files/' + downloadPath + '.mp4');
+                  client.sendMessage(message.from, media,{caption: cap });
+                  fs.unlinkSync('./temp_files/' + downloadPath + '.mp4');
+                }else if(fileSizeInMegabytes < 100){
+                  MessageMedia.fromUrl(thumbnail).then((pic)=>{
+                    client.sendMessage(message.from,pic,{caption: cap});
                   });
-                  
-                  if( attachment ){
-                  const media = new MessageMedia(mimetype, attachment, filename);
-        
-                  client.sendMessage(message.from, media, {caption: 'this is my caption', sendMediaAsDocument: true });
-                  }
-          }else{
-            client.sendMessage(message.from, 'Sorry Dear, ye Video ka size kafi zyada hai.😢😞🥲 Try Anoher one 🙂🙂');
-          }
-          
+
+                  const media = MessageMedia.fromFilePath('./temp_files/' + downloadPath + '.mp4');
+                  client.sendMessage(message.from, media,{sendMediaAsDocument: true});
+                  fs.unlinkSync('./temp_files/' + downloadPath + '.mp4');
+                } else {
+                  fs.unlinkSync('./temp_files/' + downloadPath + '.mp4');
+                  client.sendMessage(message.from, `🚫 ERROR 🚫
+                  ⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+                }
+
+              });
+        }else{
+          client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
+        }
+    
+      });
     } else {
       client.sendMessage(message.from, "Bro, youtube video ka link toh theek bhejen 🙏🏻🙏🏻");
-
     }
+
 
   }
 });
@@ -166,42 +204,7 @@ client.on("message", async (message) => {
   var foo = message.body;
   foo = foo.substring(0, 5);
   if (foo.toLowerCase() === "ytmp3") {
-    var url = message.body.slice(6);
-
-    if (ytdl.validateURL(url)) {
-      message.reply("😍Wait Dear! apko mp3 send horhi hai😍");
-
-      let { yta } = require('./lib/y2mate')
-      let quality = '320kbps';
-      let ytv_ =  await yta(url, quality)
-      
-      console.log(ytv_);
-      const media2 =  await  MessageMedia.fromUrl(ytv_.thumb);
-      let cap = `*🖼️ ${ytv_.title}*`;
-      client.sendMessage(message.from,media2,{caption: cap});
-
-      let file = ytv_.dl_link;
-      
-      let mimetype;
-      let filename;
-      const attachment = await axios.get(file, {
-      responseType: 'arraybuffer'
-      }).then(response => {
-      mimetype = response.headers['content-type'];
-      filename = file.split("/").pop();
-      return response.data.toString('base64');
-      });
-      
-      if( attachment ){
-      const media = new MessageMedia(mimetype, attachment, filename);
-
-      client.sendMessage(message.from, media, {caption: cap });
-      }
-
-    } else {
-      client.sendMessage(message.from, "Bro, Youtube Video ka link toh theek bhejen 🙏🏻🙏🏻");
-    }
-
+    
   }
 });
 
