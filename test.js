@@ -1,38 +1,30 @@
-function nFormatter(num, digits) {
-  const lookup = [
-    { value: 1, symbol: "" },
-    { value: 1e3, symbol: "k" },
-    { value: 1e6, symbol: "M" },
-    { value: 1e9, symbol: "G" },
-    { value: 1e12, symbol: "T" },
-    { value: 1e15, symbol: "P" },
-    { value: 1e18, symbol: "E" }
-  ];
-  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  var item = lookup.slice().reverse().find(function(item) {
-    return num >= item.value;
-  });
-  return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
-}
-let converted = ("1000");
-console.log(converted);
-  
-  // let { ytv } = require('./lib/y2mate')
- 
-  // // let quality = args[1] ? args[1] : '360p'
-  // let media =   ytv(text, '360p').then((data=>{
-  //   console.log(data);
-  // }))
+const video = ytdl(url);
+              console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
+              video.once('response', () => {
+                starttime = Date.now();
+              });
+              video.on('progress', (chunkLength, downloaded, total) => {
+                const percent = downloaded / total;
+                const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
+                const estimatedDownloadTime = (downloadedMinutes / percent) - downloadedMinutes;
+                readline.cursorTo(process.stdout, 0);
+                process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded `);
+                process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
+                process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
+                process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);
+                readline.moveCursor(process.stdout, 0, -1);
+              });
+              video.on('end', () => {
+               
+                var stats = fs.statSync(output);
+                var fileSizeInBytes = stats.size;
+                var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+                 if(fileSizeInMegabytes < 100){
+                 
+                } else {
+                  fs.unlinkSync(output);
+                  client.sendMessage(message.from, `🚫 ERROR 🚫
+                  ⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+                }
 
-//   let { yta } = require('./lib/y2mate')
-//   let text = "https://www.youtube.com/watch?v=-05P5FB4AJc";
-//   let quality = '320kbps';
-//   let media =   yta(text, quality).then((data)=>{
-//     console.log(data);
-//   });
- 
-// let str = "ytmp3mazanlabeeb";
-// console.log(str.slice(6));
-
-//   GojoMdNx.sendImage(m.chat, media.thumb, `🐦 Title : ${media.title}\n🐦 File Size : ${media.filesizeF}\n🐦 Url : ${isUrl(text)}\n🐦 Ext : MP3\n🐦 Resolution : ${args[1] || '320kbps'}`, m)
-//   GojoMdNx.sendMessage(m.chat, { audio: { url: media.dl_link }, mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
+              });
