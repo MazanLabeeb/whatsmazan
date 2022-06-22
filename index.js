@@ -10,10 +10,14 @@ const axios = require("axios");
 // const ffmpeg = require('fluent-ffmpeg');
 // ffmpeg.setFfmpegPath(ffmpegPath);
 
+
+const linux = "/usr/bin/google-chrome";
+const chrome = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    executablePath: linux,
   }
 });
 
@@ -100,6 +104,7 @@ client.on("message", async (message) => {
           let text = url;
           // let quality = args[1] ? args[1] : '360p'
 
+          console.log(`"${url}"`)
           let ytv_ = await  ytv(text, '360p');
           console.log( ytv_);
           
@@ -169,8 +174,13 @@ client.on("message", async (message) => {
       let quality = '320kbps';
       let ytv_ =  await yta(url, quality)
       
+      console.log(ytv_);
+      const media2 =  await  MessageMedia.fromUrl(ytv_.thumb);
       let cap = `*🖼️ ${ytv_.title}*`;
+      client.sendMessage(message.from,media2,{caption: cap});
+
       let file = ytv_.dl_link;
+      
       let mimetype;
       let filename;
       const attachment = await axios.get(file, {
