@@ -231,7 +231,7 @@ client.on("message", async (message) => {
 
         if (!data.videoDetails.age_restricted) {
 
-          message.reply("Wait dear! video send horhi hai apko😍");
+          message.reply("Wait dear! audio send horhi hai apko😍");
 
 
           const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
