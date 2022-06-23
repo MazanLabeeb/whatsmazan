@@ -5,9 +5,12 @@ const { MessageMedia } = require('whatsapp-web.js');
 const ytdl = require('ytdl-core');    // youtube
 const readline = require('readline');   //manual
 const path = require("path"); //manual
-const axios = require("axios");
-
-
+const {axios, request} = require("axios");
+// import pkg from 'axios';
+// const { request } = pkg;
+const {JSDOM} = require("jsdom");
+// import jsdom from "jsdom";
+// const { JSDOM } = jsdom;
 
 const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -15,7 +18,7 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: windows,
+    executablePath: linux,
   }
 });
 
@@ -36,7 +39,7 @@ function nFormatter(num, digits) {
     { value: 1, symbol: "" },
     { value: 1e3, symbol: "k" },
     { value: 1e6, symbol: "M" },
-    { value: 1e9, symbol: "G" },
+    { value: 1e9, symbol: "B" },
     { value: 1e12, symbol: "T" },
     { value: 1e15, symbol: "P" },
     { value: 1e18, symbol: "E" }
@@ -68,7 +71,8 @@ var help = `Supported Commands:
 
 1️⃣➡️  ytmp4 URL
 2️⃣➡️  ytmp3 URL
-3️⃣➡️  help
+3️⃣➡️  fb URL
+4️⃣➡️  help
 
 Contact Mazan👦 for more details 🇵🇰♥️`;
 /*********************************************************************************************************** */
@@ -79,7 +83,7 @@ client.on('message', message => {
 
 client.on('message', message => {
   var foo = message.body.toLowerCase();
-  if (foo.substring(0, 5) === "ytmp4" || foo.substring(0, 5) === "ytmp3") {
+  if (foo.substring(0, 5) === "ytmp4" || foo.substring(0, 5) === "ytmp3" || foo.substring(0,2) === "fb") {
   } else if (message.body.toLocaleLowerCase() === "help") {
     message.reply(help);
   } else if (foo == "thanks") {
@@ -286,6 +290,65 @@ client.on("message", async (message) => {
     }
 
 
+  }
+});
+
+
+// FACEBOOK VIDEO DOWNLOADER
+client.on("message", async (message) => {
+  var foo = message.body;
+  foo = foo.substring(0, 2);
+  if (foo.toLowerCase() === "fb") {
+    var fuck = message.body.slice(3);
+
+
+          message.reply("Wait dear! video send horhi hai apko😍");
+    
+          let cap = "👀Ye len Sir 🫡";
+      
+    
+    const options = {
+      method: 'POST',
+      url: 'https://scrapeninja.p.rapidapi.com/scrape',
+      headers: {
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': 'a91be11252msh29d475061ebed14p11aea1jsne53d7d66ed71',
+        'X-RapidAPI-Host': 'scrapeninja.p.rapidapi.com'
+      },
+      data: '{"geo":"eu","url":"https://fdown.net//download.php","headers":["Content-Type: application/x-www-form-urlencoded"],"method":"POST","data":"URLz='+fuck+'"}'
+    };
+    
+    request(options).then(function (response) {
+    
+        fuck = response.data.body;
+        const dom = new JSDOM(fuck);
+        var fetched = dom.window.document.getElementById("hdlink");
+        var fetched2 = dom.window.document.getElementById("sdlink");
+      
+        if(fetched){
+          console.log(fetched.href); // "Hello world"
+          console.log("HD QUAILTY")
+          MessageMedia.fromUrl(fetched.href).then((pic) => {
+              client.sendMessage(message.from, pic, { caption: cap });
+              });
+  
+      }else if(fetched2){
+          console.log(fetched2.href); // "Hello world"
+          console.log("SD QUAILTY")
+          MessageMedia.fromUrl(fetched2.href).then((pic) => {
+              client.sendMessage(message.from, pic, { caption: cap });
+              });
+      }else{
+          // console.log(Null);
+          console.log("ERROR")
+          message.reply("Sorry dear, something went wrong.😞😞😞");
+
+      }
+    
+    }).catch(function (error) {
+      console.error("nooooooooooooo");
+    });
+    
   }
 });
 
