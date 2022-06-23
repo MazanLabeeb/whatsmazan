@@ -1,16 +1,18 @@
 # Whatsapp-Bot-
 **What this bot does**
-This bot automates whatsapp and will download and send the youtube video.
+This bot automates whatsapp and will download and send the youtube and whatsapp video.
+
 
 **How to USE?**
 
-just type
+Supported Commands:
 
-youtube URL_OF_VIDEO
+1️⃣➡️  ytmp4 URL
+2️⃣➡️  ytmp3 URL
+3️⃣➡️  fb URL
+4️⃣➡️  help
 
-For example, 
-
-youtube https://youtu.be/dX4Uk8QMiAs
+Contact Mazan👦 for more details 🇵🇰♥️
 
 **How to install**
 
