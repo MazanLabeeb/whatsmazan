@@ -18,11 +18,10 @@ Contact Mazan👦 for more details 🇵🇰♥️
 
 Install node js and npm on your system/server.
 
-Run the command
-npm install
-
-Run the Bot 
-npm index.js
+Step 1:  git clone https://github.com/MazanLabeeb/whatsmazan
+Step 2:  cd whatsmazan
+Step 3: npm install
+Step 4: node index.js
 
 Scan the QR code and boom the bot is working.
 
