@@ -256,9 +256,24 @@ client.on("message", async (message) => {
               MessageMedia.fromUrl(thumbnail).then((pic) => {
                 client.sendMessage(message.from, pic, { caption: cap });
               });
-              const media = MessageMedia.fromFilePath(output3);
-              client.sendMessage(message.from, media);
-              fs.unlinkSync(output3);
+              var stats = fs.statSync(output3);
+              var fileSizeInBytes = stats.size;
+              var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+              if (fileSizeInMegabytes < 16) {
+                const media = MessageMedia.fromFilePath(output3);
+                client.sendMessage(message.from, media);
+                fs.unlinkSync(output3);
+              }else if(fileSizeInMegabytes < 100){
+                const media = MessageMedia.fromFilePath(output3);
+              client.sendMessage(message.from, media, { sendMediaAsDocument: true });
+                fs.unlinkSync(output3);
+              }else{
+                fs.unlinkSync(output3);
+                client.sendMessage(message.from, `🚫 ERROR 🚫
+                    ⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+              
+              }
+             
 
             });
         } else {
