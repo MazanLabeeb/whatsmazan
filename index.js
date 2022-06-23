@@ -227,7 +227,7 @@ client.on("message", async (message) => {
         let cap = `📛 *Title* :  ${title}
 🆔 *Channel* : ${channel}
 🎦 *Views*: ${views}
-👍🏻 *Likes*: ${likes}`;
+👍🏻 *Likes*: ${likes}`; 
 
         if (!data.videoDetails.age_restricted) {
 
