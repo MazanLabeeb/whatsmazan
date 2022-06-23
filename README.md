@@ -1,26 +1,27 @@
 # Whatsapp-Bot-
 **What this bot does**
-This bot automates whatsapp and will download and send the youtube video.
+This bot automates whatsapp and will download and send the youtube and whatsapp video.
+
 
 **How to USE?**
 
-just type
+Supported Commands:
 
-youtube URL_OF_VIDEO
+1️⃣➡️  ytmp4 URL
+2️⃣➡️  ytmp3 URL
+3️⃣➡️  fb URL
+4️⃣➡️  help
 
-For example, 
-
-youtube https://youtu.be/dX4Uk8QMiAs
+Contact Mazan👦 for more details 🇵🇰♥️
 
 **How to install**
 
 Install node js and npm on your system/server.
 
-Run the command
-npm install
-
-Run the Bot 
-npm index.js
+Step 1:  git clone https://github.com/MazanLabeeb/whatsmazan
+Step 2:  cd whatsmazan
+Step 3: npm install
+Step 4: node index.js
 
 Scan the QR code and boom the bot is working.
 
