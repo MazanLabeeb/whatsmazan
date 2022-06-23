@@ -6,7 +6,8 @@ const ytdl = require('ytdl-core');    // youtube
 const readline = require('readline');   //manual
 const path = require("path"); //manual
 const axios = require("axios");
-const { EasyFF } = require('EasyFF');
+
+
 
 const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -140,7 +141,7 @@ client.on("message", async (message) => {
 👍🏻 *Likes*: ${likes}`;
 
         if (!data.videoDetails.age_restricted) {
-          message.reply("Wait dear! video send horhi hai apko😍😍");
+          message.reply("Wait dear! video send horhi hai apko😍");
           const video = ytdl(url);
           console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
           video.once('response', () => {
@@ -194,6 +195,7 @@ client.on("message", async (message) => {
   }
 });
 
+// replying message with AUDIO SEND from our own pc   mp3
 client.on("message", async (message) => {
   var foo = message.body;
   foo = foo.substring(0, 5);
@@ -228,66 +230,37 @@ client.on("message", async (message) => {
 👍🏻 *Likes*: ${likes}`;
 
         if (!data.videoDetails.age_restricted) {
-          message.reply("Wait dear! audio send horhi hai apko😍😍");
-          const video = ytdl(url);
-          console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
-          video.once('response', () => {
-            starttime = Date.now();
+
+          message.reply("Wait dear! video send horhi hai apko😍");
+
+
+          const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+          const ffmpeg = require('fluent-ffmpeg');
+          ffmpeg.setFfmpegPath(ffmpegPath);
+          let id = videoId;
+
+          let stream = ytdl(id, {
+            quality: 'highestaudio',
           });
-          video.on('progress', (chunkLength, downloaded, total) => {
-            const percent = downloaded / total;
-            const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
-            const estimatedDownloadTime = (downloadedMinutes / percent) - downloadedMinutes;
-            readline.cursorTo(process.stdout, 0);
-            process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded `);
-            process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
-            process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
-            process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);
-            readline.moveCursor(process.stdout, 0, -1);
-          });
-          video.on('end', () => {
-            process.stdout.write('\nDownload complete, now sending to user...\n\n');
-            var stats = fs.statSync(output);
-            var fileSizeInBytes = stats.size;
-            var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
-            if (fileSizeInMegabytes < 100) {
+
+          let start = Date.now();
+          ffmpeg(stream)
+            .audioBitrate(128)
+            .save(output3)
+            .on('progress', p => {
+              readline.cursorTo(process.stdout, 0);
+              process.stdout.write(`${p.targetSize}kb downloaded`);
+            })
+            .on('end', () => {
+              console.log(`\ndone, thanks - ${(Date.now() - start) / 1000}s`);
               MessageMedia.fromUrl(thumbnail).then((pic) => {
                 client.sendMessage(message.from, pic, { caption: cap });
               });
+              const media = MessageMedia.fromFilePath(output3);
+              client.sendMessage(message.from, media);
+              fs.unlinkSync(output3);
 
-              //        conversion 
-              //        conversion 
-              
-              const ffmpeg = new EasyFF(output);
-              ffmpeg.on("log", console.log) 
-              ffmpeg.on("error", console.error); 
-              ffmpeg.on("proccess", (size, time, bitrate, speed, asjson)=>{ 
-                // console.log(asjson);
-              })
-              ffmpeg.on("end", ()=>{
-                console.log("Conversion Completed!");
-                const media = MessageMedia.fromFilePath(output3);
-                client.sendMessage(message.from, media);
-                fs.unlinkSync(output);
-                fs.unlinkSync(output3);
-              })
-              ffmpeg.on("start", ()=>console.log("Started!"))
-              ffmpeg.addInput("input.mp4");
-              ffmpeg.toMP3();
-              ffmpeg.reWrite();
-              ffmpeg.output(output3)
-              ffmpeg.run()
-              //        conversion 
-              //        conversion 
-
-
-            } else {
-              fs.unlinkSync(output);
-              client.sendMessage(message.from, `🚫 ERROR 🚫
-                  ⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
-            }
-
-          });
+            });
         } else {
           client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
         }
@@ -300,4 +273,4 @@ client.on("message", async (message) => {
 
   }
 });
-// replying message with AUDIO SEND from our own pc   mp3
+
