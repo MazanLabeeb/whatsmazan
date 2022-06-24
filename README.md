@@ -35,10 +35,15 @@ puppeteer: {
 ⚠️⚠️
 
 This script uses whatsapp-web.js which is made using Puppeteer. 
-
+<br>
 
 *How to install Google Chrome on Ubuntu*
 
+```
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+```
+<br>
+```
 sudo apt install ./google-chrome-stable_current_amd64.deb
+```
 
