@@ -1,19 +1,17 @@
 # Whatsmazan
 **What this bot does**
+<br>
 This bot automates whatsapp and will download and send the youtube and facebook videos.
+<br>
+
+**Available Features**
 
 
-**How to USE?**
+- [x]  Downlaod youtube mp4 Video and send
+- [x]  Downlaod youtube mp3 audio and send
+- [x]  Search something from youtube
+- [x]  Downlaod facebook video and send
 
-Supported Commands:
-
-1️⃣➡️  ytmp4 URL <br>
-2️⃣➡️  ytmp3 URL <br>
-3️⃣➡️  ytsearch songs <br>
-4️⃣➡️  fb URL <br>
-5️⃣➡️  help <br>
-
-Contact Mazan👦 for more details 🇵🇰♥️
 
 **How to install**
 
