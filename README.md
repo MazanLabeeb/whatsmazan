@@ -1,44 +1,44 @@
-# Whatsapp-Bot-
-**What this bot does**
-This bot automates whatsapp and will download and send the youtube and whatsapp video.
+# Whatsmazan
 
 
-**How to USE?**
+**Available Features**
 
-Supported Commands:
 
-1️⃣➡️  ytmp4 URL
-2️⃣➡️  ytmp3 URL
-3️⃣➡️  ytsearch songs
-4️⃣➡️  fb URL
-5️⃣➡️  help
-s
-Contact Mazan👦 for more details 🇵🇰♥️
+- [x]  Downlaod youtube mp4 Video and send
+- [x]  Downlaod youtube mp3 audio and send
+- [x]  Search something from youtube
+- [x]  Downlaod facebook video and send
+
 
 **How to install**
 
-Install node js and npm on your system/server.
+Install node js and npm on your system/server. 
 
-Step 1:  git clone https://github.com/MazanLabeeb/whatsmazan
-Step 2:  cd whatsmazan
-Step 3: npm install
-Step 4: node index.js
+<b>Step 1:  </b>git clone https://github.com/MazanLabeeb/whatsmazan <br>
+<b>Step 2: </b> cd whatsmazan <br>
+<b>Step 3: </b> npm install <br>
+<b>Step 4:  </b>node index.js <br>
 
 Scan the QR code and boom the bot is working.
 
-⚠️⚠️
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️<br>
 You have to download the chrome browser in your machine. 
+<br>
 If you have previously downloaded, set the path of the browser in the index.js file
+```
 puppeteer: {
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   }
-⚠️⚠️
-
-This script uses whatsapp-web.js which is made using Puppeteer. 
-
+  ```
+<br>
 
 *How to install Google Chrome on Ubuntu*
 
+```
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+```
+
+```
 sudo apt install ./google-chrome-stable_current_amd64.deb
+```
 
