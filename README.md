@@ -9,9 +9,10 @@ Supported Commands:
 
 1️⃣➡️  ytmp4 URL
 2️⃣➡️  ytmp3 URL
-3️⃣➡️  fb URL
-4️⃣➡️  help
-
+3️⃣➡️  ytsearch songs
+4️⃣➡️  fb URL
+5️⃣➡️  help
+s
 Contact Mazan👦 for more details 🇵🇰♥️
 
 **How to install**
