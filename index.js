@@ -127,8 +127,8 @@ client.on('ready', () => {
 
 //    AUTOMATION
 client.on("message", async (message) => {
-  var foo = message.body;
-  var foo = commands.filter((i) => foo.startsWith(i))[0];
+  var foo = message.body.toLowerCase();
+  var foo = commands.filter((i) => foo.startsWith(i.toLowerCase()))[0];
   switch (foo) {
     case "ytmp4": {
       //  --------------  START  OF CASE --------------------
@@ -314,6 +314,9 @@ client.on("message", async (message) => {
       //  --------------  START  OF CASE --------------------
       var init = async () => {
         var query = message.body.slice(9);
+        if(query == ""){
+            client.sendMessage(message.from, "Kindly ytsearch k aagy b kuch likhen  🙏🏻🙏🏻");
+        } query = "Mazan Labeeb";
         const r = await yts(query)
         const videos = r.videos.slice(0, 5)
         videos.forEach(function (v) {
