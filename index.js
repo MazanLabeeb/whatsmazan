@@ -88,7 +88,7 @@ client.on('message', async (message) => {
   } else if (message.body.toLocaleLowerCase() === "help") {
     const typing = await message.getChat(); typing.sendStateTyping();
     message.reply(help);
-  } else if (message.body.startsWith('thank ') || message.body.startsWith('thanks ')) {
+  } else if (message.body.startsWith('thank') || message.body.startsWith('thanks')) {
     const typing = await message.getChat(); typing.sendStateTyping();
 
     message.reply("No problem!");
@@ -357,7 +357,7 @@ client.on("message", async (message) => {
         url: 'https://scrapeninja.p.rapidapi.com/scrape',
         headers: {
           'content-type': 'application/json',
-          'X-RapidAPI-Key': 'a91be11252msh29d475061ebed14p11aea1jsne53d7d66ed71',
+          'X-RapidAPI-Key': 'a927ba3601mshc66b0340928b126p12f63fjsna01a6e834c95',
           'X-RapidAPI-Host': 'scrapeninja.p.rapidapi.com'
         },
         data: '{"geo":"eu","url":"https://fdown.net//download.php","headers":["Content-Type: application/x-www-form-urlencoded"],"method":"POST","data":"URLz=' + fuck + '"}'
