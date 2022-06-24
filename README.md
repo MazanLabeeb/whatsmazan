@@ -26,13 +26,13 @@ Install node js and npm on your system/server.
 
 Scan the QR code and boom the bot is working.
 
-⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️<br>
 You have to download the chrome browser in your machine. 
 <br>
 If you have previously downloaded, set the path of the browser in the index.js file
 puppeteer: {
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-  }
+  }<br>
 ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
 
 <br>
