@@ -33,9 +33,6 @@ puppeteer: {
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   }
   ```
-  <br>
-⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
-
 <br>
 
 *How to install Google Chrome on Ubuntu*
