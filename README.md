@@ -7,12 +7,12 @@ This bot automates whatsapp and will download and send the youtube and whatsapp 
 
 Supported Commands:
 
-1️⃣➡️  ytmp4 URL \n
-2️⃣➡️  ytmp3 URL \n
-3️⃣➡️  ytsearch songs \n
-4️⃣➡️  fb URL \n
-5️⃣➡️  help \n
-s
+1️⃣➡️  ytmp4 URL <br>
+2️⃣➡️  ytmp3 URL <br>
+3️⃣➡️  ytsearch songs <br>
+4️⃣➡️  fb URL <br>
+5️⃣➡️  help <br>
+
 Contact Mazan👦 for more details 🇵🇰♥️
 
 **How to install**
