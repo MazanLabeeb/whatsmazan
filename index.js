@@ -309,7 +309,7 @@ client.on("message", async (message) => {
       fbdown.fetch(url).then((d) => {
         const output = path.resolve(__dirname, './' + Date.now() + "." + "mp4");
         const file = fs.createWriteStream(output);
-        const request = http.get(url, function (response) {
+        const request = http.get(d, function (response) {
           response.pipe(file);
           // after download completed close filestream
           file.on("finish", () => {
