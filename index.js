@@ -6,9 +6,8 @@ const ytdl = require('ytdl-core');    // youtube
 const yts = require('yt-search');
 const readline = require('readline');   //manual
 const path = require("path"); //manual
-const { axios, request } = require("axios");
-const { JSDOM } = require("jsdom");
-
+const fbdown = require("./lib/fbdown")
+const http = require("https");
 
 const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -16,38 +15,11 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux,
+    executablePath: windows,
   }
 });
 
 
-function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) return '0 Bytes';
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-function nFormatter(num, digits) {
-  const lookup = [
-    { value: 1, symbol: "" },
-    { value: 1e3, symbol: "k" },
-    { value: 1e6, symbol: "M" },
-    { value: 1e9, symbol: "B" },
-    { value: 1e12, symbol: "T" },
-    { value: 1e15, symbol: "P" },
-    { value: 1e18, symbol: "E" }
-  ];
-  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  var item = lookup.slice().reverse().find(function (item) {
-    return num >= item.value;
-  });
-  return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
-}
 
 client.on('qr', qr => {
   qrcode.generate(qr, { small: true });
@@ -201,8 +173,7 @@ client.on("message", async (message) => {
                 fs.unlinkSync(output);
               } else {
                 fs.unlinkSync(output);
-                client.sendMessage(message.from, `🚫 ERROR 🚫
-                  ⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+                client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
               }
 
             });
@@ -246,10 +217,7 @@ client.on("message", async (message) => {
           console.log("Views: " + data.videoDetails.viewCount);
           console.log("Likes: " + data.videoDetails.likes);
           console.log("Age-restricted: " + data.videoDetails.age_restricted);
-          let cap = `📛 *Title* :  ${title}
-🆔 *Channel* : ${channel}
-🎦 *Views*: ${views}
-👍🏻 *Likes*: ${likes}`;
+          let cap = `📛 *Title* :  ${title}\n🆔 *Channel* : ${channel}\n🎦 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
 
           if (!data.videoDetails.age_restricted) {
 
@@ -291,9 +259,7 @@ client.on("message", async (message) => {
                   fs.unlinkSync(output3);
                 } else {
                   fs.unlinkSync(output3);
-                  client.sendMessage(message.from, `🚫 ERROR 🚫
-                    ⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
-
+                  client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
                 }
 
 
@@ -314,20 +280,15 @@ client.on("message", async (message) => {
       //  --------------  START  OF CASE --------------------
       var init = async () => {
         var query = message.body.slice(9);
-        if(query == ""){
-            client.sendMessage(message.from, "Kindly ytsearch k aagy b kuch likhen  🙏🏻🙏🏻");
-            query = "Mazan Labeeb";
+        if (query == "") {
+          client.sendMessage(message.from, "Kindly ytsearch k aagy b kuch likhen  🙏🏻🙏🏻");
+          query = "Mazan Labeeb";
         }
         const r = await yts(query)
         const videos = r.videos.slice(0, 5)
         videos.forEach(function (v) {
           let thumbnail = v.thumbnail;
-          let cap = `📛 *Title* :  ${v.title}
-⏱️ *Duration*: ${v.timestamp}
-🆔 *Channel* : ${v.author.name}
-🎦 *Views*: ${nFormatter(v.views)}
-🌐 *Posted*: ${v.ago}
-🔗 *Link*: ${v.url}`;
+          let cap = `📛 *Title* :  ${v.title}\n⏱️ *Duration*: ${v.timestamp}\n🆔 *Channel* : ${v.author.name}\n🎦 *Views*: ${nFormatter(v.views)}\n🌐 *Posted*: ${v.ago}\n🔗 *Link*: ${v.url}`;
           // console.log(cap)
           // console.log(v.thumbnail);
           MessageMedia.fromUrl(thumbnail).then((pic) => {
@@ -341,58 +302,44 @@ client.on("message", async (message) => {
       break;
     }
     case "fb": {
-      console.log("fb")
       //  --------------  START  OF CASE --------------------
-      var fuck = message.body.slice(3);
-
-      const typing = await message.getChat(); typing.sendStateTyping();
-
-      message.reply("Wait dear! video send horhi hai apko😍");
-
+      var url = message.body.slice(3);
       let cap = "👀Ye len Sir 🫡";
 
+      fbdown.fetch(url).then((d) => {
+        const output = path.resolve(__dirname, './' + Date.now() + "." + "mp4");
+        const file = fs.createWriteStream(output);
+        const request = http.get(url, function (response) {
+          response.pipe(file);
+          // after download completed close filestream
+          file.on("finish", () => {
+            file.close();
+            var stats = fs.statSync(output);
+            var fileSizeInBytes = stats.size; var size = fileSizeInBytes / (1024 * 1024);
+            console.log(`SIZE : ${size.toFixed(2)} Mb`)
+            message.reply("Wait dear! video send horhi hai apko😍");
 
-      const options = {
-        method: 'POST',
-        url: 'https://scrapeninja.p.rapidapi.com/scrape',
-        headers: {
-          'content-type': 'application/json',
-          'X-RapidAPI-Key': 'a927ba3601mshc66b0340928b126p12f63fjsna01a6e834c95',
-          'X-RapidAPI-Host': 'scrapeninja.p.rapidapi.com'
-        },
-        data: '{"geo":"eu","url":"https://fdown.net//download.php","headers":["Content-Type: application/x-www-form-urlencoded"],"method":"POST","data":"URLz=' + fuck + '"}'
-      };
-
-      request(options).then(function (response) {
-
-        fuck = response.data.body;
-        const dom = new JSDOM(fuck);
-        var fetched = dom.window.document.getElementById("hdlink");
-        var fetched2 = dom.window.document.getElementById("sdlink");
-
-        if (fetched) {
-          console.log(fetched.href); // "Hello world"
-          console.log("HD QUAILTY")
-          MessageMedia.fromUrl(fetched.href).then((pic) => {
-            client.sendMessage(message.from, pic, { caption: cap });
+            if (size < 16) {
+              const media = MessageMedia.fromFilePath(output);
+              client.sendMessage(message.from, media, { caption: cap });
+              fs.unlinkSync(output);
+            } else if (size < 99) {
+              const media = MessageMedia.fromFilePath(output);
+              client.sendMessage(message.from, media, { sendMediaAsDocument: true });
+              fs.unlinkSync(output);
+            } else {
+              fs.unlinkSync(output);
+              client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+            }
           });
+        });
 
-        } else if (fetched2) {
-          console.log(fetched2.href); // "Hello world"
-          console.log("SD QUAILTY")
-          MessageMedia.fromUrl(fetched2.href).then((pic) => {
-            client.sendMessage(message.from, pic, { caption: cap });
-          });
-        } else {
-          // console.log(Null);
-          console.log("ERROR")
-          message.reply("Sorry dear, something went wrong.😞😞😞");
+      }).catch((e) => {
+        message.getChat().then((d) => d.sendStateTyping());
+        message.reply(`Sorry something went wrong.😢Please send the valid facebook url. 😞`);
+        console.log(e);
+      })
 
-        }
-
-      }).catch(function (error) {
-        console.error("nooooooooooooo");
-      });
 
       //  --------------  END OF CASE --------------------
       break;
@@ -407,3 +354,35 @@ client.on("message", async (message) => {
   }
 
 });
+
+
+
+
+
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+function nFormatter(num, digits) {
+  const lookup = [
+    { value: 1, symbol: "" },
+    { value: 1e3, symbol: "k" },
+    { value: 1e6, symbol: "M" },
+    { value: 1e9, symbol: "B" },
+    { value: 1e12, symbol: "T" },
+    { value: 1e15, symbol: "P" },
+    { value: 1e18, symbol: "E" }
+  ];
+  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  var item = lookup.slice().reverse().find(function (item) {
+    return num >= item.value;
+  });
+  return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
+}
