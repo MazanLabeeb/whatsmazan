@@ -1,8 +1,5 @@
 # Whatsmazan
-**What this bot does**
-<br>
-This bot automates whatsapp and will download and send the youtube and facebook videos.
-<br>
+
 
 **Available Features**
 
