@@ -15,10 +15,10 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux,
+    executablePath: linux
+
   }
 });
-
 
 
 client.on('qr', qr => {
@@ -38,11 +38,12 @@ var rmsg = `⚠️ Invalid Command
 type *_help_* to see available commands`;
 var help = `Supported Commands:
 
-1️⃣➡️  ytmp4 URL
-2️⃣➡️  ytmp3 URL
-3️⃣➡️  ytsearch songs
-4️⃣➡️  fb URL
-5️⃣➡️  help
+1️⃣➡️  ytmp4 link
+2️⃣➡️  ytmp3 link
+3️⃣➡️  ytsearch cricket match
+4️⃣➡️  fb facebookvideokalink
+5️⃣➡️  sticker
+6️⃣➡️  help
 
 Contact Mazan👦 for more details 🇵🇰♥️`;
 /*********************************************************************************************************** */
@@ -52,7 +53,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -129,10 +130,7 @@ client.on("message", async (message) => {
           console.log("Views: " + data.videoDetails.viewCount);
           console.log("Likes: " + data.videoDetails.likes);
           console.log("Age-restricted: " + data.videoDetails.age_restricted);
-          let cap = `📛 *Title* :  ${title}
-🆔 *Channel* : ${channel}
-🎦 *Views*: ${views}
-👍🏻 *Likes*: ${likes}`;
+          let cap = `📛 *Title* :  ${title}\n🆔 *Channel* : ${channel}\n🎦 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
 
           if (!data.videoDetails.age_restricted) {
 
@@ -342,6 +340,45 @@ client.on("message", async (message) => {
 
 
       //  --------------  END OF CASE --------------------
+      break;
+    }
+    case "sticker": {
+      var msg = message;
+      if (msg.hasMedia) {
+        const attachmentData = await msg.downloadMedia();
+        const output = path.resolve(__dirname, './temp_files/' + Date.now() + "." + attachmentData.mimetype.slice(6));
+
+        if (attachmentData.mimetype.startsWith("image")) {
+          fs.writeFile(
+            output,
+            attachmentData.data,
+            "base64",
+            function (err) {
+              if (err) {
+                console.log(err);
+              } else {
+                // //  CONVERSION
+                const jpgImage = MessageMedia.fromFilePath(output);
+                client.sendMessage(msg.from, jpgImage, { sendMediaAsSticker: true }).then((d) => {
+                  console.log("Sticker sent");
+                }).catch((e) => {
+                  console.log(e)
+                });
+
+                fs.unlinkSync(output);
+              }
+            }
+          );
+
+
+        } else {
+          msg.reply("Sorry, I can make stickers of static images only.😣😔");
+        }
+      } else {
+        let cap = `Please 🙏🏻 send image  with caption Sticker. For example, `;
+        const media = MessageMedia.fromFilePath('./files/demosticker.jpeg');
+        client.sendMessage(msg.from, media, { caption: cap });
+      }
       break;
     }
     default: {
