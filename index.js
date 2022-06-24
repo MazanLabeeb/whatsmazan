@@ -316,7 +316,8 @@ client.on("message", async (message) => {
         var query = message.body.slice(9);
         if(query == ""){
             client.sendMessage(message.from, "Kindly ytsearch k aagy b kuch likhen  🙏🏻🙏🏻");
-        } query = "Mazan Labeeb";
+            query = "Mazan Labeeb";
+        }
         const r = await yts(query)
         const videos = r.videos.slice(0, 5)
         videos.forEach(function (v) {
