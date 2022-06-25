@@ -166,7 +166,6 @@ client.on("message", async (message) => {
                   client.sendMessage(message.from, pic, { caption: cap });
                 });
     
-
                 const media = MessageMedia.fromFilePath(output);
                 client.sendMessage(message.from, media, { sendMediaAsDocument: true });
                 fs.unlinkSync(output);
