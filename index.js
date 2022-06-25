@@ -161,7 +161,7 @@ client.on("message", async (message) => {
                 const media = MessageMedia.fromFilePath('./temp_files/' + downloadPath + '.mp4');
                 client.sendMessage(message.from, media, { caption: cap });
                 fs.unlinkSync(output);
-              } else if (fileSizeInMegabytes < 100) {
+              } else if (fileSizeInMegabytes < 50) {
                 MessageMedia.fromUrl(thumbnail).then((pic) => {
                   client.sendMessage(message.from, pic, { caption: cap });
                 });
@@ -251,7 +251,7 @@ client.on("message", async (message) => {
                   const media = MessageMedia.fromFilePath(output3);
                   client.sendMessage(message.from, media);
                   fs.unlinkSync(output3);
-                } else if (fileSizeInMegabytes < 100) {
+                } else if (fileSizeInMegabytes < 50) {
                   const media = MessageMedia.fromFilePath(output3);
                   client.sendMessage(message.from, media, { sendMediaAsDocument: true });
                   fs.unlinkSync(output3);
