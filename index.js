@@ -33,9 +33,6 @@ client.initialize();
 
 var people = [];
 /*********************************************************************************************************** */
-var rmsg = `⚠️ Invalid Command
-
-type *_help_* to see available commands`;
 var help = `Supported Commands:
 
 1️⃣➡️  ytmp4 link
@@ -77,12 +74,7 @@ client.on('message', async (message) => {
 
       client.sendMessage(message.from, help);
       people.push(message.from); console.log("People: " + people.toString());
-    } else {
-      // message.react('👍');
-      if (Math.floor(Math.random() * 4) == 3) {
-        const typing = await message.getChat(); typing.sendStateTyping();
-        message.reply(rmsg);
-      }
+
     }
   }
 });
@@ -114,69 +106,74 @@ client.on("message", async (message) => {
 
       if (ytdl.validateURL(url)) {
         ytdl.getBasicInfo(url).then((data) => {
-
-          let URL = data.formats[0].url;
-          let title = data.videoDetails.title;
-          let channel = data.videoDetails.ownerChannelName;
-          let views = nFormatter(data.videoDetails.viewCount);
-          let likes = nFormatter(data.videoDetails.likes);
-          let videoId = data.videoDetails.videoId;
-          let thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-
-
-          // console.log("URL: "+(data.formats[0].url));
-          console.log("Title: " + data.videoDetails.title);
-          console.log("Channel: " + data.videoDetails.ownerChannelName);
-          console.log("Views: " + data.videoDetails.viewCount);
-          console.log("Likes: " + data.videoDetails.likes);
-          console.log("Age-restricted: " + data.videoDetails.age_restricted);
-          let cap = `📛 *Title* :  ${title}\n🆔 *Channel* : ${channel}\n🎦 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
-
-          if (!data.videoDetails.age_restricted) {
+          let size = (data.formats[0].contentLength) / 1048576;
+          if (size < 50) {
+            let URL = data.formats[0].url;
+            let title = data.videoDetails.title;
+            let channel = data.videoDetails.ownerChannelName;
+            let views = nFormatter(data.videoDetails.viewCount);
+            let likes = nFormatter(data.videoDetails.likes);
+            let videoId = data.videoDetails.videoId;
+            let thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
 
-            message.reply("Wait dear! video send horhi hai apko😍");
-            const video = ytdl(url);
-            console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
-            video.once('response', () => {
-              starttime = Date.now();
-            });
-            video.on('progress', (chunkLength, downloaded, total) => {
-              const percent = downloaded / total;
-              const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
-              const estimatedDownloadTime = (downloadedMinutes / percent) - downloadedMinutes;
-              readline.cursorTo(process.stdout, 0);
-              process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded `);
-              process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
-              process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
-              process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);
-              readline.moveCursor(process.stdout, 0, -1);
-            });
-            video.on('end', () => {
-              process.stdout.write('\nDownload complete, now sending to user...\n\n');
-              var stats = fs.statSync(output);
-              var fileSizeInBytes = stats.size;
-              var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
-              if (fileSizeInMegabytes < 16) {
-                const media = MessageMedia.fromFilePath('./temp_files/' + downloadPath + '.mp4');
-                client.sendMessage(message.from, media, { caption: cap });
-                fs.unlinkSync(output);
-              } else if (fileSizeInMegabytes < 50) {
-                MessageMedia.fromUrl(thumbnail).then((pic) => {
-                  client.sendMessage(message.from, pic, { caption: cap });
-                });
-    
-                const media = MessageMedia.fromFilePath(output);
-                client.sendMessage(message.from, media, { sendMediaAsDocument: true });
-                fs.unlinkSync(output);
-              } else {
-                fs.unlinkSync(output);
-                client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
-              }
+            // console.log("URL: "+(data.formats[0].url));
+            console.log("Title: " + data.videoDetails.title);
+            console.log("Channel: " + data.videoDetails.ownerChannelName);
+            console.log("Views: " + data.videoDetails.viewCount);
+            console.log("Likes: " + data.videoDetails.likes);
+            console.log("Age-restricted: " + data.videoDetails.age_restricted);
+            let cap = `🌐 *Title* :  ${title}\n🛡️ *Channel* : ${channel}\n👀 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
 
-            });
+            if (!data.videoDetails.age_restricted) {
+
+
+              message.reply("Wait dear! video send horhi hai apko😍");
+              const video = ytdl(url);
+              console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
+              video.once('response', () => {
+                starttime = Date.now();
+              });
+              video.on('progress', (chunkLength, downloaded, total) => {
+                const percent = downloaded / total;
+                const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
+                const estimatedDownloadTime = (downloadedMinutes / percent) - downloadedMinutes;
+                readline.cursorTo(process.stdout, 0);
+                process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded `);
+                process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
+                process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
+                process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);
+                readline.moveCursor(process.stdout, 0, -1);
+              });
+              video.on('end', () => {
+                process.stdout.write('\nDownload complete, now sending to user...\n\n');
+                var stats = fs.statSync(output);
+                var fileSizeInBytes = stats.size;
+                var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+                if (fileSizeInMegabytes < 16) {
+                  const media = MessageMedia.fromFilePath('./temp_files/' + downloadPath + '.mp4');
+                  client.sendMessage(message.from, media, { caption: cap });
+                  fs.unlinkSync(output);
+                } else if (fileSizeInMegabytes < 50) {
+                  MessageMedia.fromUrl(thumbnail).then((pic) => {
+                    client.sendMessage(message.from, pic, { caption: cap });
+                  });
+
+                  const media = MessageMedia.fromFilePath(output);
+                  client.sendMessage(message.from, media, { sendMediaAsDocument: true });
+                  fs.unlinkSync(output);
+                } else {
+                  fs.unlinkSync(output);
+                  client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+                }
+
+              });
+            } else {
+              client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
+            }
+
           } else {
-            client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
+            client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, file size too large.😔`);
           }
 
         });
@@ -199,72 +196,76 @@ client.on("message", async (message) => {
 
       if (ytdl.validateURL(url)) {
         ytdl.getBasicInfo(url).then((data) => {
-
-          let URL = data.formats[0].url;
-          let title = data.videoDetails.title;
-          let channel = data.videoDetails.ownerChannelName;
-          let views = nFormatter(data.videoDetails.viewCount);
-          let likes = nFormatter(data.videoDetails.likes);
-          let videoId = data.videoDetails.videoId;
-          let thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-
-
-          // console.log("URL: "+(data.formats[0].url));
-          console.log("Title: " + data.videoDetails.title);
-          console.log("Channel: " + data.videoDetails.ownerChannelName);
-          console.log("Views: " + data.videoDetails.viewCount);
-          console.log("Likes: " + data.videoDetails.likes);
-          console.log("Age-restricted: " + data.videoDetails.age_restricted);
-          let cap = `📛 *Title* :  ${title}\n🆔 *Channel* : ${channel}\n🎦 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
-
-          if (!data.videoDetails.age_restricted) {
-
-            message.reply("Wait dear! audio send horhi hai apko😍");
-
-
-            const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-            const ffmpeg = require('fluent-ffmpeg');
-            ffmpeg.setFfmpegPath(ffmpegPath);
-            let id = videoId;
-
-            let stream = ytdl(id, {
-              quality: 'highestaudio',
-            });
-
-            let start = Date.now();
-            ffmpeg(stream)
-              .audioBitrate(128)
-              .save(output3)
-              .on('progress', p => {
-                readline.cursorTo(process.stdout, 0);
-                process.stdout.write(`${p.targetSize}kb downloaded`);
-              })
-              .on('end', () => {
-                console.log(`\ndone, thanks - ${(Date.now() - start) / 1000}s`);
-                MessageMedia.fromUrl(thumbnail).then((pic) => {
-                  client.sendMessage(message.from, pic, { caption: cap });
-                });
-                var stats = fs.statSync(output3);
-                var fileSizeInBytes = stats.size;
-                var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
-                if (fileSizeInMegabytes < 16) {
-                  const media = MessageMedia.fromFilePath(output3);
-                  client.sendMessage(message.from, media);
-                  fs.unlinkSync(output3);
-                } else if (fileSizeInMegabytes < 50) {
-                  const media = MessageMedia.fromFilePath(output3);
-                  client.sendMessage(message.from, media, { sendMediaAsDocument: true });
-                  fs.unlinkSync(output3);
-                } else {
-                  fs.unlinkSync(output3);
-                  client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
-                }
-
-
+          let size = (data.formats[0].contentLength) / 1048576;
+          if (size < 50) {
+            let title = data.videoDetails.title;
+            let channel = data.videoDetails.ownerChannelName;
+            let views = nFormatter(data.videoDetails.viewCount);
+            let likes = nFormatter(data.videoDetails.likes);
+            let videoId = data.videoDetails.videoId;
+            let thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  
+  
+            // console.log("URL: "+(data.formats[0].url));
+            console.log("Title: " + data.videoDetails.title);
+            console.log("Channel: " + data.videoDetails.ownerChannelName);
+            console.log("Views: " + data.videoDetails.viewCount);
+            console.log("Likes: " + data.videoDetails.likes);
+            console.log("Age-restricted: " + data.videoDetails.age_restricted);
+            let cap = `🌐 *Title* :  ${title}\n🛡️ *Channel* : ${channel}\n👀 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
+  
+            if (!data.videoDetails.age_restricted) {
+  
+              message.reply("Wait dear! audio send horhi hai apko😍");
+  
+  
+              const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+              const ffmpeg = require('fluent-ffmpeg');
+              ffmpeg.setFfmpegPath(ffmpegPath);
+              let id = videoId;
+  
+              let stream = ytdl(id, {
+                quality: 'highestaudio',
               });
-          } else {
-            client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
+  
+              let start = Date.now();
+              ffmpeg(stream)
+                .audioBitrate(128)
+                .save(output3)
+                .on('progress', p => {
+                  readline.cursorTo(process.stdout, 0);
+                  process.stdout.write(`${p.targetSize}kb downloaded`);
+                })
+                .on('end', () => {
+                  console.log(`\ndone, thanks - ${(Date.now() - start) / 1000}s`);
+                  MessageMedia.fromUrl(thumbnail).then((pic) => {
+                    client.sendMessage(message.from, pic, { caption: cap });
+                  });
+                  var stats = fs.statSync(output3);
+                  var fileSizeInBytes = stats.size;
+                  var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+                  if (fileSizeInMegabytes < 16) {
+                    const media = MessageMedia.fromFilePath(output3);
+                    client.sendMessage(message.from, media);
+                    fs.unlinkSync(output3);
+                  } else if (fileSizeInMegabytes < 50) {
+                    const media = MessageMedia.fromFilePath(output3);
+                    client.sendMessage(message.from, media, { sendMediaAsDocument: true });
+                    fs.unlinkSync(output3);
+                  } else {
+                    fs.unlinkSync(output3);
+                    client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
+                  }
+  
+  
+                });
+            } else {
+              client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
+            }
+          }else{
+            client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, file size too large.`);
           }
+          
 
         });
       } else {
@@ -286,7 +287,7 @@ client.on("message", async (message) => {
         const videos = r.videos.slice(0, 5)
         videos.forEach(function (v) {
           let thumbnail = v.thumbnail;
-          let cap = `📛 *Title* :  ${v.title}\n⏱️ *Duration*: ${v.timestamp}\n🆔 *Channel* : ${v.author.name}\n🎦 *Views*: ${nFormatter(v.views)}\n🌐 *Posted*: ${v.ago}\n🔗 *Link*: ${v.url}`;
+          let cap = `🌐 *Title* :  ${v.title}\n⏱️ *Duration*: ${v.timestamp}\n🛡️ *Channel* : ${v.author.name}\n👀 *Views*: ${nFormatter(v.views)}\n📅 *Posted*: ${v.ago}\n🔗 *Link*: ${v.url}`;
           // console.log(cap)
           // console.log(v.thumbnail);
           MessageMedia.fromUrl(thumbnail).then((pic) => {
@@ -321,7 +322,7 @@ client.on("message", async (message) => {
               const media = MessageMedia.fromFilePath(output);
               client.sendMessage(message.from, media, { caption: cap });
               fs.unlinkSync(output);
-            } else if (size < 99) {
+            } else if (size < 45) {
               const media = MessageMedia.fromFilePath(output);
               client.sendMessage(message.from, media, { sendMediaAsDocument: true });
               fs.unlinkSync(output);
