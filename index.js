@@ -15,7 +15,7 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux
+    executablePath: windows
   }
 });
 
@@ -390,8 +390,6 @@ client.on("message", async (message) => {
         const media = MessageMedia.fromFilePath(data);
         client.sendMessage(message.from, media)
         fs.unlinkSync(data);
-
-
       }).catch((data) => console.log(data));
       break;
     }
