@@ -15,7 +15,7 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: windows
+    executablePath: linux
   }
 });
 
