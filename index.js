@@ -6,7 +6,7 @@ const ytdl = require('ytdl-core');    // youtube
 const yts = require('yt-search');
 const readline = require('readline');   //manual
 const path = require("path"); //manual
-const fbdown = require("./lib/fbdown")
+const fbdown = require("./lib/fdown")
 const http = require("https");
 
 const linux = "/usr/bin/google-chrome";
@@ -15,7 +15,7 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux
+    executablePath: windows
 
   }
 });
