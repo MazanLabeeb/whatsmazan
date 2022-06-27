@@ -15,7 +15,7 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: windows
+    executablePath: linux
 
   }
 });
@@ -81,7 +81,7 @@ client.on('message', async (message) => {
 
 
 client.on('ready', () => {
-  const number = "+923061695230";
+  const number = "+923187049495";
   const text = "helo Mazan! I am online ♥️";
   const chatId = number.substring(1) + "@c.us";
   // Sending message.
