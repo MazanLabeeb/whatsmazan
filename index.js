@@ -8,15 +8,14 @@ const readline = require('readline');   //manual
 const path = require("path"); //manual
 const fbdown = require("./lib/fbdown")
 const http = require("https");
-
+const tts = require('./lib/tts');
 const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: windows
-
+    executablePath: linux
   }
 });
 
@@ -33,16 +32,17 @@ client.initialize();
 
 var people = [];
 /*********************************************************************************************************** */
-var help = `Supported Commands:
+var help = `*_Supported Commands:_*
 
-1️⃣➡️  ytmp4 link
-2️⃣➡️  ytmp3 link
-3️⃣➡️  ytsearch cricket match
-4️⃣➡️  fb facebookvideokalink
-5️⃣➡️  sticker
-6️⃣➡️  help
+🔴 *ytmp4* link
+🟠 *ytmp3* link
+🟡 *ytsearch* Irfan Junejo
+🟢 *fb* facebookvideokalink
+🔵 *sticker*
+🟣 *tts1* text-to-speech
+⚫ *help*
 
-Contact Mazan👦 for more details 🇵🇰♥️`;
+Contact *Mazan👦* for more details 🇵🇰♥️`;
 /*********************************************************************************************************** */
 
 client.on('message', message => {
@@ -50,7 +50,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -58,25 +58,26 @@ client.on('message', async (message) => {
   } else if (message.body.toLocaleLowerCase() === "help") {
     const typing = await message.getChat(); typing.sendStateTyping();
     message.reply(help);
-  } else if (message.body.startsWith('thank') || message.body.startsWith('thanks')) {
+  } else if (message.body.toLowerCase().startsWith('thank') || message.body.toLowerCase().startsWith('thanks')) {
     const typing = await message.getChat(); typing.sendStateTyping();
 
     message.reply("No problem!");
-  } else {
-    var len = (people.filter((d) => d === message.from)).length;
-    if (len < 1) {
-      const contact = await message.getContact();
-      const chat = await message.getChat();
-      chat.sendMessage(`Welcome @${contact.number}!`, {
-        mentions: [contact]
-      });
-      const typing = await message.getChat(); typing.sendStateTyping();
-
-      client.sendMessage(message.from, help);
-      people.push(message.from); console.log("People: " + people.toString());
-
-    }
   }
+  // else {
+  //   var len = (people.filter((d) => d === message.from)).length;
+  //   if (len < 1) {
+  //     const contact = await message.getContact();
+  //     const chat = await message.getChat();
+  //     chat.sendMessage(`Welcome @${contact.number}!`, {
+  //       mentions: [contact]
+  //     });
+  //     const typing = await message.getChat(); typing.sendStateTyping();
+
+  //     client.sendMessage(message.from, help);
+  //     people.push(message.from); console.log("People: " + people.toString());
+
+  //   }
+  // }
 });
 
 
@@ -128,7 +129,7 @@ client.on("message", async (message) => {
             if (!data.videoDetails.age_restricted) {
 
 
-              message.reply("Wait dear! video send horhi hai apko😍");
+              message.reply("```Wait dear! video is being send😍```");
               const video = ytdl(url);
               console.log("Video Url Ok"); video.pipe(fs.createWriteStream(output));
               video.once('response', () => {
@@ -204,8 +205,8 @@ client.on("message", async (message) => {
             let likes = nFormatter(data.videoDetails.likes);
             let videoId = data.videoDetails.videoId;
             let thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  
-  
+
+
             // console.log("URL: "+(data.formats[0].url));
             console.log("Title: " + data.videoDetails.title);
             console.log("Channel: " + data.videoDetails.ownerChannelName);
@@ -213,21 +214,21 @@ client.on("message", async (message) => {
             console.log("Likes: " + data.videoDetails.likes);
             console.log("Age-restricted: " + data.videoDetails.age_restricted);
             let cap = `🌐 *Title* :  ${title}\n🛡️ *Channel* : ${channel}\n👀 *Views*: ${views}\n👍🏻 *Likes*: ${likes}`;
-  
+
             if (!data.videoDetails.age_restricted) {
-  
-              message.reply("Wait dear! audio send horhi hai apko😍");
-  
-  
+
+              message.reply("```Wait dear! audio is being send😍```");
+
+
               const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
               const ffmpeg = require('fluent-ffmpeg');
               ffmpeg.setFfmpegPath(ffmpegPath);
               let id = videoId;
-  
+
               let stream = ytdl(id, {
                 quality: 'highestaudio',
               });
-  
+
               let start = Date.now();
               ffmpeg(stream)
                 .audioBitrate(128)
@@ -256,16 +257,16 @@ client.on("message", async (message) => {
                     fs.unlinkSync(output3);
                     client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, WhatsApp  doesn't allow sending file 📁 larger than 100 Mb 😔`);
                   }
-  
-  
+
+
                 });
             } else {
               client.sendMessage(message.from, "Oops! Age Restricted videos nai download kr skty aap...🙏🏻");
             }
-          }else{
+          } else {
             client.sendMessage(message.from, `🚫 ERROR 🚫\n⚠️ Sorry dear, file size too large.`);
           }
-          
+
 
         });
       } else {
@@ -316,7 +317,7 @@ client.on("message", async (message) => {
             var stats = fs.statSync(output);
             var fileSizeInBytes = stats.size; var size = fileSizeInBytes / (1024 * 1024);
             console.log(`SIZE : ${size.toFixed(2)} Mb`)
-            message.reply("Wait dear! video send horhi hai apko😍");
+            message.reply("```Wait dear! video is being send😍```");
 
             if (size < 16) {
               const media = MessageMedia.fromFilePath(output);
@@ -380,6 +381,18 @@ client.on("message", async (message) => {
         const media = MessageMedia.fromFilePath('./files/demosticker.jpeg');
         client.sendMessage(msg.from, media, { caption: cap });
       }
+      break;
+    }
+    case "tts": {
+      var input = message.body.slice(5);
+      var person = message.body.slice(3, 4);
+      tts.tts(input, person).then((data) => {
+        const media = MessageMedia.fromFilePath(data);
+        client.sendMessage(message.from, media)
+        fs.unlinkSync(data);
+
+
+      }).catch((data) => console.log(data));
       break;
     }
     default: {

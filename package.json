@@ -10,6 +10,7 @@
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "jsdom": "^20.0.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.22.0",
     "node-fetch": "^2.6.1",
     "pm2": "^5.2.0",
     "qrcode-terminal": "^0.12.0",
