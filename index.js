@@ -11,6 +11,7 @@ const http = require("https");
 const tts = require('./lib/tts');
 const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+const puppeteer = require('puppeteer');
 
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -36,10 +37,12 @@ var help = `*_Supported Commands:_*
 
 🔴 *ytmp4* link
 🟠 *ytmp3* link
-🟡 *ytsearch* Irfan Junejo
+🟡 *ytsearch* Saket Gohkale
 🟢 *fb* facebookvideokalink
 🔵 *sticker*
 🟣 *tts1* text-to-speech
+🟤 *google* Who is Elon Musk?
+⚪ *images* Civic 2022 pics
 ⚫ *help*
 
 Contact *Mazan👦* for more details 🇵🇰♥️`;
@@ -50,7 +53,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -198,7 +201,7 @@ client.on("message", async (message) => {
       if (ytdl.validateURL(url)) {
         ytdl.getBasicInfo(url).then((data) => {
           let size = (data.formats[0].contentLength) / 1048576;
-          if (size < 50) {
+          if (size < 80) {
             let title = data.videoDetails.title;
             let channel = data.videoDetails.ownerChannelName;
             let views = nFormatter(data.videoDetails.viewCount);
@@ -391,6 +394,52 @@ client.on("message", async (message) => {
         client.sendMessage(message.from, media)
         fs.unlinkSync(data);
       }).catch((data) => console.log(data));
+      break;
+    }
+    case "google": {
+      var q = message.body.slice(7);
+      (async () => {
+        let p = "./"+ Date.now()+'.png';
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const page = await browser.newPage();
+        await page.goto('https://www.google.com/search?q=' + q);
+        await page.setViewport({
+          width: 1100,
+          height: 800,
+      });
+        await page.screenshot({ path: p });
+        await browser.close();
+    
+        // action
+        let cap = "🔍 *"+q+"*";
+        const media = MessageMedia.fromFilePath(p);
+        client.sendMessage(message.from, media, { caption: cap });
+        fs.unlinkSync(p);
+
+      })();
+      break;
+    }
+    case "images": {
+      var q = message.body.slice(7);
+      (async () => {
+        let p = "./"+ Date.now()+'.png';
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const page = await browser.newPage();
+        await page.goto('https://www.google.com/search?q='+q+'&tbm=isch');
+        await page.setViewport({
+          width: 1100,
+          height: 800,
+      });
+        await page.screenshot({ path: p });
+        await browser.close();
+    
+        // action
+        let cap = "🔍 *"+q+"*";
+        const media = MessageMedia.fromFilePath(p);
+        client.sendMessage(message.from, media, { caption: cap });
+        fs.unlinkSync(p);
+
+      })();
       break;
     }
     default: {
