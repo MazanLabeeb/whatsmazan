@@ -12,6 +12,8 @@ const tts = require('./lib/tts');
 const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const puppeteer = require('puppeteer');
+var Scraper = require('images-scraper');
+
 
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -32,6 +34,7 @@ client.on('ready', () => {
 client.initialize();
 
 var people = [];
+var imgdb = [];
 /*********************************************************************************************************** */
 var help = `*_Supported Commands:_*
 
@@ -399,19 +402,19 @@ client.on("message", async (message) => {
     case "google": {
       var q = message.body.slice(7);
       (async () => {
-        let p = "./"+ Date.now()+'.png';
+        let p = "./" + Date.now() + '.png';
         const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         const page = await browser.newPage();
         await page.goto('https://www.google.com/search?q=' + q);
         await page.setViewport({
           width: 1100,
           height: 800,
-      });
+        });
         await page.screenshot({ path: p });
         await browser.close();
-    
+
         // action
-        let cap = "🔍 *"+q+"*";
+        let cap = "🔍 *" + q + "*";
         const media = MessageMedia.fromFilePath(p);
         client.sendMessage(message.from, media, { caption: cap });
         fs.unlinkSync(p);
@@ -421,27 +424,43 @@ client.on("message", async (message) => {
     }
     case "images": {
       var q = message.body.slice(7);
-      (async () => {
-        let p = "./"+ Date.now()+'.png';
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-        const page = await browser.newPage();
-        await page.goto('https://www.google.com/search?q='+q+'&tbm=isch');
-        await page.setViewport({
-          width: 1100,
-          height: 800,
+
+      const google = new Scraper({
+        puppeteer: {
+          headless: true,
+        },
       });
-        await page.screenshot({ path: p });
-        await browser.close();
-    
-        // action
-        let cap = "🔍 *"+q+"*";
-        const media = MessageMedia.fromFilePath(p);
-        client.sendMessage(message.from, media, { caption: cap });
-        fs.unlinkSync(p);
+
+      (async () => {
+        const results = await google.scrape(q, 5);
+        let len = results.length;
+        if (len > 0) {
+          for (let i = 0; i < len; i++) {
+            let caption = "🔍 *" +results[i].title+ "*";
+            // console.log('results', results);
+            MessageMedia.fromUrl(results[i].url).then((pic) => {
+              client.sendMessage(message.from, pic, { caption: caption }).then((e)=>{
+                if( i == len-1){
+                  client.sendMessage(message.from, "🔍 Reply with *More* to get more pics.");
+                }
+              });
+              
+            }).catch((err)=>{
+              // client.sendMessage(message.from, "```🚫 ERROR 🚫\n⚠️ Sorry dear, something went wrong.😔```");
+              if( i == len-1){
+                client.sendMessage(message.from, "🔍 Reply with *More* to get more pics.");
+              }
+            });
+            
+          }
+        } else {
+          client.sendMessage(message.from, "```🔍 Result not found.```");
+        }
 
       })();
       break;
     }
+
     default: {
       //  --------------  START  OF CASE --------------------
 
