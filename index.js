@@ -42,10 +42,11 @@ var help = `*_Supported Commands:_*
 🟠 *ytmp3* link
 🟡 *ytsearch* Saket Gohkale
 🟢 *fb* facebookvideokalink
-🔵 *sticker*
+🔵 *sticker* 
 🟣 *tts1* text-to-speech
 🟤 *google* Who is Elon Musk?
 ⚪ *images* Civic 2022 pics
+🔴 *img5* Civic 2022 pics
 ⚫ *help*
 
 Contact *Mazan👦* for more details 🇵🇰♥️`;
@@ -56,7 +57,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -383,9 +384,26 @@ client.on("message", async (message) => {
           msg.reply("Sorry, I can make stickers of static images only.😣😔");
         }
       } else {
-        let cap = `Please 🙏🏻 send image  with caption Sticker. For example, `;
-        const media = MessageMedia.fromFilePath('./files/demosticker.jpeg');
-        client.sendMessage(msg.from, media, { caption: cap });
+        var q = message.body.slice(9);
+
+      const google = new Scraper({});
+
+      (async () => {
+        const results = await google.scrape(q, 7);
+        let len = results.length;
+        if (len > 0) {
+          for (let i = 0; i < len; i++) {
+            MessageMedia.fromUrl(results[i].url).then((pic) => {
+              client.sendMessage(message.from, pic, {  sendMediaAsSticker: true }).then((e) => { });
+
+            }).catch((err) => {});
+
+          }
+        } else {
+          client.sendMessage(message.from, "```🔍 No sticker found.```");
+        }
+
+      })();
       }
       break;
     }
@@ -436,22 +454,47 @@ client.on("message", async (message) => {
         let len = results.length;
         if (len > 0) {
           for (let i = 0; i < len; i++) {
-            let caption = "🔍 *" +results[i].title+ "*";
+            let caption = "🔍 *" + results[i].title + "*";
             // console.log('results', results);
             MessageMedia.fromUrl(results[i].url).then((pic) => {
-              client.sendMessage(message.from, pic, { caption: caption }).then((e)=>{
-                if( i == len-1){
-                  client.sendMessage(message.from, "🔍 Reply with *More* to get more pics.");
-                }
-              });
-              
-            }).catch((err)=>{
-              // client.sendMessage(message.from, "```🚫 ERROR 🚫\n⚠️ Sorry dear, something went wrong.😔```");
-              if( i == len-1){
-                client.sendMessage(message.from, "🔍 Reply with *More* to get more pics.");
-              }
+              client.sendMessage(message.from, pic, { caption: caption }).then((e) => { });
+
+            }).catch((err) => {
             });
-            
+
+          }
+        } else {
+          client.sendMessage(message.from, "```🔍 Result not found.```");
+        }
+
+      })();
+      break;
+    }
+
+    case "img": {
+      var q = message.body.slice(6);
+      let limit = parseInt(message.body.slice(3, 5));
+      if (isNaN(limit)) limit = 5;
+      if(limit > 20) limit = 20;
+      const google = new Scraper({
+        puppeteer: {
+          headless: true,
+        },
+      });
+
+      (async () => {
+        const results = await google.scrape(q, limit);
+        let len = results.length;
+        if (len > 0) {
+          for (let i = 0; i < len; i++) {
+            let caption = "🔍 *" + results[i].title + "*";
+            // console.log('results', results);
+            MessageMedia.fromUrl(results[i].url).then((pic) => {
+              client.sendMessage(message.from, pic, { caption: caption }).then((e) => { });
+
+            }).catch((err) => {
+            });
+
           }
         } else {
           client.sendMessage(message.from, "```🔍 Result not found.```");
