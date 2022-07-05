@@ -13,12 +13,13 @@ const linux = "/usr/bin/google-chrome";
 const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const puppeteer = require('puppeteer');
 var Scraper = require('images-scraper');
+const translate = require('./lib/translate.js');
 
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux
+    executablePath: windows
   }
 });
 
@@ -47,6 +48,8 @@ var help = `*_Supported Commands:_*
 🟤 *google* Who is Elon Musk?
 ⚪ *images* Civic 2022 pics
 🔴 *img5* Civic 2022 pics
+🟠 *translate1* How are you?
+🟡 *translate2* Aap kese hain?
 ⚫ *help*
 
 Contact *Mazan👦* for more details 🇵🇰♥️`;
@@ -57,7 +60,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img", "translate1","translate2"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -501,6 +504,25 @@ client.on("message", async (message) => {
         }
 
       })();
+      break;
+    }
+
+    case "translate1":{
+      var msg = message.body.slice(11);
+      let translated = translate.translate(msg,"ur");
+      translated.then((data)=>{
+        message.reply(data);
+      })
+
+      break;
+    }
+    case "translate2":{
+      var msg = message.body.slice(11);
+      let translated = translate.translate(msg,"en");
+      translated.then((data)=>{
+        message.reply(data);
+      })
+
       break;
     }
 
