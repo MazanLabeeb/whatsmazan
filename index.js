@@ -19,7 +19,7 @@ const translate = require('./lib/translate.js');
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: windows
+    executablePath: linux
   }
 });
 
