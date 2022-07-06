@@ -52,6 +52,7 @@ var help = `*_Supported Commands:_*
 🟠 *translate1* How are you?
 🟡 *translate2* Aap kese hain?
 🟢 *news* 
+🔵 *urdunews* 
 ⚫ *help*
 
 Contact *Mazan👦* for more details 🇵🇰♥️`;
@@ -62,7 +63,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img", "translate1","translate2","news"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img", "translate1","translate2","news","urdunews"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -533,12 +534,12 @@ client.on("message", async (message) => {
       if (isNaN(limit)) limit = 5;
       if(limit > 10) limit = 10;
 
-      news.news(limit).then((data)=>{
+      news.news(limit,"english").then((data)=>{
         for(var i = 0; i < limit; i++){
           let thumbnail = data[i].thumbnail;
           let body = data[i].body;
           let title = data[i].title;
-          let output = `*${title.trim()}*\n${body}`;
+          let output = `*${title.trim()}*\n \n${body}`;
           MessageMedia.fromUrl(thumbnail).then((pic) => {
             client.sendMessage(message.from, pic, { caption: output }).then((e) => { });
   
@@ -547,6 +548,28 @@ client.on("message", async (message) => {
         }
         
     });
+    break;
+    }
+    case "urdunews":{
+      let limit = parseInt(message.body.slice(8, 10));
+      if (isNaN(limit)) limit = 5;
+      if(limit > 10) limit = 10;
+
+      news.news(limit,"urdu").then((data)=>{
+        for(var i = 0; i < limit; i++){
+          let thumbnail = data[i].thumbnail;
+          let body = data[i].body;
+          let title = data[i].title;
+          let output = `*${title.trim()}*\n \n${body}`;
+          MessageMedia.fromUrl(thumbnail).then((pic) => {
+            client.sendMessage(message.from, pic, { caption: output }).then((e) => { });
+  
+          }).catch((err) => {
+          });
+        }
+        
+    });
+    break;
     }
 
     default: {
