@@ -14,6 +14,7 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const puppeteer = require('puppeteer');
 var Scraper = require('images-scraper');
 const translate = require('./lib/translate.js');
+const news = require("./lib/news");
 
 
 const client = new Client({
@@ -50,6 +51,7 @@ var help = `*_Supported Commands:_*
 🔴 *img5* Civic 2022 pics
 🟠 *translate1* How are you?
 🟡 *translate2* Aap kese hain?
+🟢 *news* 
 ⚫ *help*
 
 Contact *Mazan👦* for more details 🇵🇰♥️`;
@@ -60,7 +62,7 @@ client.on('message', message => {
 });
 
 
-var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img", "translate1","translate2"];
+var commands = ["ytmp4", "ytmp3", "ytsearch", "fb", "sticker", "tts", "google", "images", "img", "translate1","translate2","news"];
 client.on('message', async (message) => {
   var foo = message.body.toLowerCase();
   if (commands.filter((f) => foo.startsWith(f)).length == 1) {
@@ -96,7 +98,7 @@ client.on('ready', () => {
   const text = "helo Mazan! I am online ♥️";
   const chatId = number.substring(1) + "@c.us";
   // Sending message.
-  client.sendMessage(chatId, text);
+  // client.sendMessage(chatId, text);
 });
 
 
@@ -525,11 +527,32 @@ client.on("message", async (message) => {
 
       break;
     }
+    
+    case "news":{
+      let limit = parseInt(message.body.slice(4, 6));
+      if (isNaN(limit)) limit = 5;
+      if(limit > 10) limit = 10;
+
+      news.news(limit).then((data)=>{
+        for(var i = 0; i < limit; i++){
+          let thumbnail = data[i].thumbnail;
+          let body = data[i].body;
+          let title = data[i].title;
+          let output = `*${title.trim()}*\n${body}`;
+          MessageMedia.fromUrl(thumbnail).then((pic) => {
+            client.sendMessage(message.from, pic, { caption: output }).then((e) => { });
+  
+          }).catch((err) => {
+          });
+        }
+        
+    });
+    }
 
     default: {
       //  --------------  START  OF CASE --------------------
 
-      console.log("default")
+      // console.log("default")
       //  --------------  END OF CASE --------------------
 
     }

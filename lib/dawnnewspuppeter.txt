@@ -1,0 +1,26 @@
+const puppeteer = require('puppeteer');
+
+(async () => {
+    const browser = await puppeteer.launch({
+        // headless:false
+    });
+    const page = await browser.newPage();
+    await page.goto('https://www.dawn.com/latest-news');
+    // await page.goto('https://www.dawnnews.tv/latest-news');      for urdu
+    let result = await page.evaluate(() => {
+        let a = document.getElementsByClassName('story__link');
+        let b = document.getElementsByClassName('media__item');
+        let data = [];
+        for(let i = 0; i < 5 ; i++){
+            // console.log(a[0].innerText)
+            data.push( {
+                "title": a[i].innerText,
+                "thumbnail": b[i].firstChild.firstChild.firstChild.src
+            });
+        }
+        return data;
+
+    });
+    console.log((result));
+      await browser.close();
+})();
