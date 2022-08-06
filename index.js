@@ -14,13 +14,14 @@ const windows = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const puppeteer = require('puppeteer');
 var Scraper = require('images-scraper');
 const translate = require('./lib/translate.js');
-const news = require("./lib/news");
+const news = require("newspk");
 
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: linux
+    executablePath: windows,
+    headless: false
   }
 });
 

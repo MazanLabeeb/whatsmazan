@@ -3,11 +3,18 @@
 
 **Available Features**
 
-
 - [x]  Downlaod youtube mp4 Video and send
 - [x]  Downlaod youtube mp3 audio and send
 - [x]  Search something from youtube
 - [x]  Downlaod facebook video and send
+- [x]  stickers
+- [x]  text to speech
+- [x]  search for images through google
+- [x]  google something
+- [x]  translate urdu to english
+- [x]  translate english to urdu
+- [x]  english news
+- [x]  urdu news
 
 
 **How to install**
